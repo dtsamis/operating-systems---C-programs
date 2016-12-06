@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <string.h>
+
+int main(int argc, char *argv[])
+{
+	int segA,segB,segcB,segcA,segrA,segp;   //dhlwsh metavlhtwn
+	
+	int i,j,k,*l,*m,*u,*v,rowA,colA,colB,*product;   
+	int *A;
+	int *B;segA=atoi(argv[3]);   //metatroph twn alfarithmhtikwn orismatwn se akeraious
+segB=atoi(argv[4]);
+segcB=atoi(argv[5]);
+segcA=atoi(argv[6]);
+segrA=atoi(argv[7]);
+segp=atoi(argv[8]);
+A=(int*)shmat(segA,NULL,0);
+B=(int*)shmat(segB,NULL,0);
+	l=(int*)shmat(segrA,NULL,0);
+	//l=(int*)malloc(sizeof(int));
+	rowA=*l;	
+	v=(int*)shmat(segcB,NULL,0);
+	//v=(int*)malloc(sizeof(int));
+	colB=*v;	
+	m=(int*)shmat(segcA,NULL,0);
+	colA=*m;
+	i=atoi(argv[1]);
+	j=atoi(argv[2]);
+product=(int*)shmat(segp,NULL,0);
+*product=0;	
+	for(k=0;k<colA;k++)
+		*product=*product+A[i*colA+k]*B[colB*k+j];
+	
+	return 0;}

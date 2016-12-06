@@ -1,0 +1,154 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <string.h>
+
+int main()
+{
+	char *arg[9]; //dhlwsh pinaka alfarithmhtikwn gia apothikeysh orismatwn ths execvp
+	char first[2],second[2],third[6],fourth[6],fifth[6],sixth[6],seventh[6],eighth[6];//proswrina alfarithmhtika gia ta 													orismata ths execvp
+	int segp,segA,segB,segC,segrA,segrB,segcA,segcB; //dhlwsh metavlhtwn pou tha xrhsimopoihthoun san anagnwristika 								mhnmhs
+    int *A;
+    int *B;  //dhlwsh pinakwn akeraiwn (twn pollaplasiastewn kai tou ginomenou tous
+    int *C;
+	FILE *fp;   //dhlwsh deikth gia diavasma tvn pinakwn apo to arxeio
+    int i,j,k,l,m,*rowA,*rowB,*columnA,*columnB,u,v;  //dhlwsh metavlhtwn metrhtwn kai diastasewn pinaka
+    int *product;//dhlwsh metablhths ginomenou
+	
+    if((fp=fopen("pinakas.txt","r"))==NULL)   //anoigma arxeiou gia diavasma kai taytoxronos elegxos sfalmatos
+    printf("Adynamia anagnwshs arxeiou");  //emfanish mhnymatos lathous
+    else
+    {
+        fscanf(fp,"%d %d",&l,&m);     //diavasma apo to arxeio twn duiastasewn tou prwtoy pinaka
+        printf("\nl=%d kai m=%d\n",l,m);  //emfanish sthn othonh twn diastasewn tou pinaka
+		
+		if((segrA=shmget(IPC_PRIVATE,sizeof(int),IPC_CREAT))<0)   //dhmiourgia koinhs mnhmhs kai elegxos lathous
+  printf("Memory fault!");
+   else
+		{
+			rowA=(int*)shmat(segrA,NULL,0);    //antistoixish metablhths me koinh mnhmh
+			rowA=(int*)malloc(sizeof(int));   //ekxwrhsh mnhmhs
+		*rowA=l;   //apodosh timhs (epanalambanetai h idia diadikasia kathe fora pou theloume na dhmiourghsoume ena 				neo kommati koinhs mnhmhs)
+		}
+		if((segcB=shmget(IPC_PRIVATE,sizeof(int),IPC_CREAT))<0)
+  printf("Memory fault!");
+   else
+		{columnB=(int*)shmat(segcB,NULL,0);
+			columnB=(int*)malloc(sizeof(int));
+			*columnB=v;}		
+		if((segcA=shmget(IPC_PRIVATE,sizeof(int),IPC_CREAT))<0)
+  printf("Memory fault!");
+   else
+{
+	columnA=(int*)shmat(segcA,NULL,0);
+	columnA=(int*)malloc(sizeof(int));
+	*columnA=m;}
+
+   if((segp=shmget(IPC_PRIVATE,sizeof(int),IPC_CREAT))<0)
+  	printf("Memory fault!");
+   else
+		product=(int*)shmat(segp,NULL,0);
+		product=(int*)malloc(sizeof(int));
+		
+		
+   if((segA=shmget(IPC_PRIVATE,l*m*sizeof(int),IPC_CREAT))<0)
+  
+			
+			printf("Memory fault!");
+   else
+		{
+			A=(int*)shmat(segA,NULL,0);
+			A=(int*)malloc(l*m*sizeof(int));
+       
+        for(i=0;i<l*m;i++)      
+          fscanf(fp,"%d",&A[i]);      //diavasma tou prwtou pinaka kai ekxwrhsh timwn ston pinaka A
+
+        for(i=0;i<l;i++)
+        {
+            printf("\n");
+            for(j=0;j<m;j++)
+            printf("%d  ",A[i*m+j]); //emfanish tou prwtou pinaka	   
+        }
+	  
+
+
+      fscanf(fp,"%d %d",&u,&v);   //diavasma diastasewn tou deyterou pinaka
+			printf("\nu=%d kai v=%d\n",u,v);
+       		if((segB=shmget(IPC_PRIVATE,u*v*sizeof(int),IPC_CREAT))<0)
+  			printf("Memory fault!");
+  		else
+		{
+			B=(int*)shmat(segB,NULL,0);
+			B=(int*)malloc(u*v*sizeof(int));
+                for(i=0;i<u*v;i++)
+                    fscanf(fp,"%d",&B[i]);  //diavasma tou deyterou pinaka
+
+        for(i=0;i<u;i++)
+        {
+            printf("\n");
+            for(j=0;j<v;j++)
+            printf("%d  ",B[i*v+j]);
+        }
+			
+			
+			if((segC=shmget(IPC_PRIVATE,l*v*sizeof(int),IPC_CREAT))<0)
+  				printf("Memory fault!");
+  			else
+		{
+			C=(int*)shmat(segC,NULL,0);        
+			C=(int*)malloc(l*v*sizeof(int));
+			
+			for(i=0;i<l;i++)
+			for(j=0;j<v;j++)
+				
+			{
+				
+				sprintf(first,"%d",i);      //metatroph arithmwn se alfarithmhtika
+								//gia thn xrhsh tous sthn execvp ws orismata
+				sprintf(second,"%d",j);
+				sprintf(third,"%d",segA);
+				sprintf(fourth,"%d",segB);
+				sprintf(fifth,"%d",segcB);
+				sprintf(sixth,"%d",segcA);
+				sprintf(seventh,"%d",segrA);
+				sprintf(eighth,"%d",segp);	
+				
+				arg[0]="compute";       //perasma twn dhmiourghmenwn alfarithmhtikwn ston pinaka 								alfarithmhtikwn
+				arg[1]=first;
+				arg[2]=second;
+				arg[3]=third;
+				arg[4]=fourth;
+				arg[5]=fifth;
+				arg[6]=sixth;
+				arg[7]=seventh;
+				arg[8]=eighth;
+				arg[9]=NULL;    //termatismos twn orismatwn me NULL pointer
+
+				
+				execvp(arg[0],arg);  //ektelesh mesw execvp tou programmatos compute
+				C[i*v+j]=*product;  //ekxwrhsh ths timhs tou ginomenou ton pinaka C
+			}
+			/*for(i=0;i<l;i++)
+				for(j=0;j<v;j++)
+			{
+				*product=0;
+				for(k=0;k<m;k++)
+				*product=*product+A[i*m+k]*B[v*k+j];
+				C[i*v+j]=*product;
+			}*/
+			for(i=0;i<l;i++)   //ektypwsh pinaka apotelesmatos (ginomeno pinakwn A B)
+			{
+				printf("\n");
+				for(j=0;j<v;j++)
+					printf("%d  ",C[i*v+j]);
+			}
+			
+   
+    fclose(fp);
+    return 0;
+}}}}}
+
+
+
