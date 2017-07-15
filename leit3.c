@@ -1,9 +1,4 @@
-/**********************************
- *        OMADA EGRASIAS          *
- *  TZAKOS SPIRIDON      AM 1953  *
- *  KAKOURAS NIKOLAOS    AM 1922  *
- *                                *
- **********************************/
+
 //eigagwgh aparaithtwn bibliothikwn
 #include <stdio.h>
 #include <stdlib.h>
